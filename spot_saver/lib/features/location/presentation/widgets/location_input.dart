@@ -20,7 +20,6 @@ class _LocationInputState extends State<LocationInput> {
   bool _isGettingLocation = false;
 
   void _getCurrentLocation() async {
-    print("==================================");
     final getCurrentLocation = GetIt.instance<GetCurrentLocation>();
 
     setState(() {
@@ -34,7 +33,6 @@ class _LocationInputState extends State<LocationInput> {
           setState(() {
             _isGettingLocation = false;
           });
-          print('Error getting location: $failure');
         },
         (locationEntity) {
           final lat = locationEntity.latitude;
@@ -52,7 +50,6 @@ class _LocationInputState extends State<LocationInput> {
       setState(() {
         _isGettingLocation = false;
       });
-      print('Error getting location: $e');
     }
   }
 
@@ -105,15 +102,21 @@ class _LocationInputState extends State<LocationInput> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            TextButton.icon(
-              icon: const Icon(Icons.location_on),
-              label: const Text('Get current location'),
-              onPressed: _getCurrentLocation,
+            Expanded(
+              child: TextButton.icon(
+                icon: const Icon(Icons.location_on),
+                label: const Text('Get current location',
+                    overflow: TextOverflow.ellipsis),
+                onPressed: _getCurrentLocation,
+              ),
             ),
-            TextButton.icon(
-              icon: const Icon(Icons.map),
-              label: const Text('Select on map'),
-              onPressed: _selectOnMap,
+            Expanded(
+              child: TextButton.icon(
+                icon: const Icon(Icons.map),
+                label: const Text('Select on map',
+                    overflow: TextOverflow.ellipsis),
+                onPressed: _selectOnMap,
+              ),
             ),
           ],
         ),

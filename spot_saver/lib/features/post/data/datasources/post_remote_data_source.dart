@@ -29,7 +29,6 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   @override
   Future<PostModel> uploadPost(PostModel post) async {
     try {
-      print(post.toJson());
       final postData =
           await supabaseClient.from('posts').insert(post.toJson()).select();
 

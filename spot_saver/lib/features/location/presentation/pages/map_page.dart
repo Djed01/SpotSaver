@@ -10,10 +10,10 @@ class MapScreen extends StatefulWidget {
   final bool isSelecting;
 
   @override
-  _MapScreenState createState() => _MapScreenState();
+  MapScreenState createState() => MapScreenState();
 }
 
-class _MapScreenState extends State<MapScreen> {
+class MapScreenState extends State<MapScreen> {
   LatLng? _pickedLocation;
 
   @override

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:spot_saver/features/post/domain/entities/post.dart';
+import 'package:spot_saver/features/post/presentation/pages/post_view_page.dart';
 
 class PostCard extends StatelessWidget {
   final Post post;
@@ -20,7 +21,7 @@ class PostCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        //Navigator.push(context, BlogViewerPage.route(blog, fromFavorites));
+        Navigator.push(context, PostViewPage.route(post, fromFavorites));
       },
       child: Container(
         height: 350,
@@ -40,7 +41,7 @@ class PostCard extends StatelessWidget {
               ),
               child: Image.network(
                 post.imageUrl,
-                height: 150,
+                height: 200,
                 width: double.infinity,
                 fit: BoxFit.cover,
                 loadingBuilder: (BuildContext context, Widget child,
@@ -52,7 +53,7 @@ class PostCard extends StatelessWidget {
                       baseColor: Colors.grey[300]!,
                       highlightColor: Colors.grey[100]!,
                       child: Container(
-                        height: 150,
+                        height: 200,
                         width: double.infinity,
                         color: Colors.white,
                       ),

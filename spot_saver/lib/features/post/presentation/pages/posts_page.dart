@@ -5,6 +5,7 @@ import 'package:spot_saver/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:spot_saver/features/auth/presentation/pages/login_page.dart';
 import 'package:spot_saver/features/post/presentation/bloc/post_bloc.dart';
 import 'package:spot_saver/features/post/presentation/pages/add_new_post_page.dart';
+import 'package:spot_saver/features/post/presentation/pages/favourite_posts_page.dart';
 import 'package:spot_saver/features/post/presentation/widgets/post_card.dart';
 import 'package:spot_saver/features/post/presentation/widgets/post_category_widget.dart';
 import 'package:flutter/cupertino.dart';
@@ -26,6 +27,7 @@ class _PostsPageState extends State<PostsPage> {
   int _currentIndex = 0;
   final List<Widget> _pages = [
     const PostPageContent(),
+    const FavoritePostsPage()
   ];
 
   @override

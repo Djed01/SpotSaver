@@ -110,26 +110,29 @@ void _initPost() {
         serviceLocator(),
       ),
     )
-    // ..registerFactory(
-    //   () => GetFavouriteBlogs(
-    //     serviceLocator(),
-    //   ),
-    // )
-    // ..registerFactory(
-    //   () => AddBlogToFavourites(
-    //     serviceLocator(),
-    //   ),
-    // )
-    // ..registerFactory(
-    //   () => RemoveBlogFromFavourites(
-    //     serviceLocator(),
-    //   ),
-    // )
+    ..registerFactory(
+      () => GetFavouritePosts(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => AddPostToFavourites(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => RemovePostFromFavourites(
+        serviceLocator(),
+      ),
+    )
     // Bloc
     ..registerLazySingleton(
       () => PostBloc(
           uploadPost: serviceLocator(),
           getAllPosts: serviceLocator(),
+          getFavouritePosts: serviceLocator(),
+          addPostToFavourites: serviceLocator(),
+          removePostFromFavourites: serviceLocator(),
           appUserCubit: serviceLocator()),
     );
 }

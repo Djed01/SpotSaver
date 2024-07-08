@@ -88,6 +88,8 @@ class _AddNewPostPageState extends State<AddNewPostPage> {
             latitude: latitude!,
             longitude: longitude!,
           ));
+    } else {
+      showSnackBar(context, "Please fill all fields correctly.");
     }
   }
 
@@ -105,9 +107,13 @@ class _AddNewPostPageState extends State<AddNewPostPage> {
         title: const Text('Add new post'),
         centerTitle: true,
         actions: [
-          IconButton(
-            onPressed: uploadPost,
-            icon: const Icon(Icons.done_rounded),
+          BlocBuilder<PostBloc, PostState>(
+            builder: (context, state) {
+              return IconButton(
+                onPressed: state is PostLoading ? null : uploadPost,
+                icon: const Icon(Icons.done_rounded),
+              );
+            },
           ),
         ],
       ),
@@ -125,7 +131,7 @@ class _AddNewPostPageState extends State<AddNewPostPage> {
         },
         builder: (context, state) {
           if (state is PostLoading) {
-            return const Loader();
+            return const Loader(); // Display the loader
           }
           return SingleChildScrollView(
             child: Padding(
@@ -149,9 +155,7 @@ class _AddNewPostPageState extends State<AddNewPostPage> {
                                 )),
                           )
                         : GestureDetector(
-                            onTap: () {
-                              selectImage();
-                            },
+                            onTap: selectImage,
                             child: DottedBorder(
                               color: AppPallete.borderColor,
                               dashPattern: const [10, 4],
