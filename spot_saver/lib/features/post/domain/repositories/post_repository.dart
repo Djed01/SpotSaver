@@ -1,0 +1,31 @@
+import 'dart:io';
+
+import 'package:spot_saver/core/error/failures.dart';
+import 'package:spot_saver/core/usecase/usecase.dart';
+import 'package:spot_saver/features/post/domain/entities/post.dart';
+import 'package:fpdart/fpdart.dart';
+
+abstract interface class PostRepository {
+  Future<Either<Failure, Post>> uploadPost(
+      {required File image,
+      required String title,
+      required String content,
+      required String posterId,
+      required List<String> categories,
+      required double latitude,
+      required double longitude});
+
+  Future<Either<Failure, Post>> addPostToFavourites({
+    required String userId,
+    required String postId,
+  });
+
+  Future<Either<Failure, NoParams>> removePostFromFavourites({
+    required String userId,
+    required String postId,
+  });
+
+  Future<Either<Failure, List<Post>>> getAllPosts();
+
+  Future<Either<Failure, List<Post>>> getFavouritePosts(String userId);
+}

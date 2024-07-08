@@ -25,3 +25,6 @@ doc/api/
 
 .flutter-plugins
 .flutter-plugins-dependencies
+
+# Ignore app_secrets.dart file
+spot_saver/lib/core/secrets/app_secrets.dart
