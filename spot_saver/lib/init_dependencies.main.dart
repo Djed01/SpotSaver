@@ -116,6 +116,11 @@ void _initPost() {
       ),
     )
     ..registerFactory(
+      () => GetUserPosts(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
       () => AddPostToFavourites(
         serviceLocator(),
       ),
@@ -131,6 +136,7 @@ void _initPost() {
           uploadPost: serviceLocator(),
           getAllPosts: serviceLocator(),
           getFavouritePosts: serviceLocator(),
+          getUserPosts: serviceLocator(),
           addPostToFavourites: serviceLocator(),
           removePostFromFavourites: serviceLocator(),
           appUserCubit: serviceLocator()),

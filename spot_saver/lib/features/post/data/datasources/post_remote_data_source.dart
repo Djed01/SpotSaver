@@ -12,6 +12,7 @@ abstract interface class PostRemoteDataSource {
   });
   Future<List<PostModel>> getAllPosts();
   Future<List<PostModel>> getFavouritesPosts(String userId);
+  Future<List<PostModel>> getUserPosts(String userId);
   Future<PostModel> addPostToFavourites({
     required String userId,
     required String postId,
@@ -91,6 +92,28 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
           .toList();
     } on PostgrestException catch (e) {
       throw ServerException(e.toString());
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<List<PostModel>> getUserPosts(String userId) async {
+    try {
+      final userPosts = await supabaseClient
+          .from('posts')
+          .select(
+              'id, updated_at, poster_id, title, content, image_url, categories, longitude, latitude, profiles(name)')
+          .eq('poster_id', userId);
+
+      return userPosts
+          .map((post) => PostModel.fromJson(post).copyWith(
+                posterName:
+                    post['profiles'] != null ? post['profiles']['name'] : '',
+              ))
+          .toList();
+    } on PostgrestException catch (e) {
+      throw ServerException(e.message);
     } catch (e) {
       throw ServerException(e.toString());
     }

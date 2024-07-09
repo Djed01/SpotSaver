@@ -38,6 +38,11 @@ class PostFetchFavouritePosts extends PostEvent {
   PostFetchFavouritePosts({this.fetchFresh = false});
 }
 
+class PostFetchUserPosts extends PostEvent {
+  final bool fetchFresh;
+  PostFetchUserPosts({this.fetchFresh = false});
+}
+
 final class PostToggleFavourite extends PostEvent {
   final String postId;
 

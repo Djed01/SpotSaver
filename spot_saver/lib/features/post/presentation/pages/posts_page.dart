@@ -6,6 +6,7 @@ import 'package:spot_saver/features/auth/presentation/pages/login_page.dart';
 import 'package:spot_saver/features/post/presentation/bloc/post_bloc.dart';
 import 'package:spot_saver/features/post/presentation/pages/add_new_post_page.dart';
 import 'package:spot_saver/features/post/presentation/pages/favourite_posts_page.dart';
+import 'package:spot_saver/features/post/presentation/pages/user_posts.dart';
 import 'package:spot_saver/features/post/presentation/widgets/post_card.dart';
 import 'package:spot_saver/features/post/presentation/widgets/post_category_widget.dart';
 import 'package:flutter/cupertino.dart';
@@ -27,7 +28,8 @@ class _PostsPageState extends State<PostsPage> {
   int _currentIndex = 0;
   final List<Widget> _pages = [
     const PostPageContent(),
-    const FavoritePostsPage()
+    const UserPostsPage(),
+    const FavoritePostsPage(),
   ];
 
   @override
@@ -42,6 +44,10 @@ class _PostsPageState extends State<PostsPage> {
 
   Future<void> _refreshFavouritesData() async {
     context.read<PostBloc>().add(PostFetchFavouritePosts(fetchFresh: true));
+  }
+
+  Future<void> _refreshUserData() async {
+    context.read<PostBloc>().add(PostFetchUserPosts(fetchFresh: true));
   }
 
   void _onCategorySelected(String category) {
@@ -65,6 +71,8 @@ class _PostsPageState extends State<PostsPage> {
     if (index == 0) {
       context.read<PostBloc>().add(PostFetchAllPosts());
     } else if (index == 1) {
+      context.read<PostBloc>().add(PostFetchUserPosts());
+    } else if (index == 2) {
       context.read<PostBloc>().add(PostFetchFavouritePosts());
     }
   }
@@ -97,8 +105,15 @@ class _PostsPageState extends State<PostsPage> {
             )
           : null,
       body: RefreshIndicator(
-        onRefresh:
-            _currentIndex == 0 ? _refreshPostData : _refreshFavouritesData,
+        onRefresh: () {
+          if (_currentIndex == 0) {
+            return _refreshPostData();
+          } else if (_currentIndex == 1) {
+            return _refreshUserData();
+          } else {
+            return _refreshFavouritesData();
+          }
+        },
         child: _pages[_currentIndex],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -106,6 +121,7 @@ class _PostsPageState extends State<PostsPage> {
         onTap: _onNavBarTapped,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.article), label: 'My Posts'),
           BottomNavigationBarItem(icon: Icon(Icons.star), label: 'Favorites'),
         ],
       ),

@@ -4,8 +4,10 @@ import 'package:hive/hive.dart';
 abstract interface class PostLocalDataSource {
   void uploadLocalPosts({required List<PostModel> posts});
   void uploadLocalFavouritePosts({required List<PostModel> posts});
+  void uploadLocalUserPosts({required List<PostModel> posts});
   List<PostModel> loadPosts();
   List<PostModel> loadFavouritePosts();
+  List<PostModel> loadUserPosts();
 }
 
 class PostLocalDataSourceImpl implements PostLocalDataSource {
@@ -13,6 +15,7 @@ class PostLocalDataSourceImpl implements PostLocalDataSource {
 
   static const String allPostsKey = 'AllPosts';
   static const String favouritePostsKey = 'FavouritePosts';
+  static const String userPostsKey = 'UserPosts';
 
   PostLocalDataSourceImpl(this.postBox);
 
@@ -44,5 +47,20 @@ class PostLocalDataSourceImpl implements PostLocalDataSource {
   void uploadLocalFavouritePosts({required List<PostModel> posts}) {
     final postsJson = posts.map((post) => post.toJson()).toList();
     postBox.put(favouritePostsKey, postsJson);
+  }
+
+  @override
+  List<PostModel> loadUserPosts() {
+    final postsJson = postBox.get(userPostsKey) as List<dynamic>?;
+    if (postsJson == null) return [];
+    return postsJson
+        .map((json) => PostModel.fromJson(json as Map<String, dynamic>))
+        .toList();
+  }
+
+  @override
+  void uploadLocalUserPosts({required List<PostModel> posts}) {
+    final postsJson = posts.map((post) => post.toJson()).toList();
+    postBox.put(userPostsKey, postsJson);
   }
 }

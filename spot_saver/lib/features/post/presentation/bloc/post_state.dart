@@ -29,6 +29,11 @@ final class PostFavouritesSuccess extends PostState {
   PostFavouritesSuccess(this.favouritePosts);
 }
 
+final class PostUserPostsSuccess extends PostState {
+  final List<Post> userPosts;
+  PostUserPostsSuccess(this.userPosts);
+}
+
 final class PostToggleFavouriteSuccess extends PostState {
   final Post post;
   final bool isFavourite;

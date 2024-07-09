@@ -98,6 +98,22 @@ class PostRepositoryImpl implements PostRepository {
   }
 
   @override
+  Future<Either<Failure, List<Post>>> getUserPosts(String userId) async {
+    try {
+      if (!await (connectionChecker.isConnected)) {
+        final posts = postLocalDataSource.loadUserPosts();
+        return right(posts);
+      }
+      final posts = await postRemoteDataSource.getUserPosts(userId);
+      postLocalDataSource.uploadLocalUserPosts(posts: posts);
+
+      return right(posts);
+    } on ServerException catch (e) {
+      return Left(Failure(e.message));
+    }
+  }
+
+  @override
   Future<Either<Failure, Post>> addPostToFavourites({
     required String userId,
     required String postId,

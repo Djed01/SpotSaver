@@ -5,6 +5,7 @@ import 'package:spot_saver/features/post/domain/entities/post.dart';
 import 'package:spot_saver/features/post/domain/usecases/add_post_to_favourites.dart';
 import 'package:spot_saver/features/post/domain/usecases/get_all_posts.dart';
 import 'package:spot_saver/features/post/domain/usecases/get_favourite_posts.dart';
+import 'package:spot_saver/features/post/domain/usecases/get_user_posts.dart';
 import 'package:spot_saver/features/post/domain/usecases/remove_post_from_favourites.dart';
 import 'package:spot_saver/features/post/domain/usecases/upload_post.dart';
 import 'package:flutter/material.dart';
@@ -17,22 +18,26 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   final UploadPost _uploadPost;
   final GetAllPosts _getAllPosts;
   final GetFavouritePosts _getFavouritePosts;
+  final GetUserPosts _getUserPosts;
   final AddPostToFavourites _addPostToFavourites;
   final RemovePostFromFavourites _removePostFromFavourites;
   final AppUserCubit _appUserCubit;
   List<Post> _cachedPosts = [];
   List<Post> _cachedFavouritePosts = [];
+  List<Post> _cachedUserPosts = [];
 
   PostBloc({
     required UploadPost uploadPost,
     required GetAllPosts getAllPosts,
     required GetFavouritePosts getFavouritePosts,
+    required GetUserPosts getUserPosts,
     required AddPostToFavourites addPostToFavourites,
     required RemovePostFromFavourites removePostFromFavourites,
     required AppUserCubit appUserCubit,
   })  : _uploadPost = uploadPost,
         _getAllPosts = getAllPosts,
         _getFavouritePosts = getFavouritePosts,
+        _getUserPosts = getUserPosts,
         _addPostToFavourites = addPostToFavourites,
         _removePostFromFavourites = removePostFromFavourites,
         _appUserCubit = appUserCubit,
@@ -42,14 +47,15 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     on<PostFilterByCategories>(_onFilterByCategories);
     on<PostFetchFavouritePosts>(_onFetchFavouritePosts);
     on<PostToggleFavourite>(_onToggleFavourite);
+    on<PostFetchUserPosts>(_onFetchUserPosts);
 
     // Load Posts and favourites when bloc is initialized
     add(PostFetchAllPosts(fetchFresh: true));
     add(PostFetchFavouritePosts(fetchFresh: true));
+    add(PostFetchUserPosts(fetchFresh: true));
   }
 
   void _onPostUpload(PostUpload event, Emitter<PostState> emit) async {
-    emit(PostLoading());
     final res = await _uploadPost(UploadPostParams(
         posterId: event.posterId,
         title: event.title,
@@ -103,6 +109,32 @@ class PostBloc extends Bloc<PostEvent, PostState> {
         (r) {
           _cachedFavouritePosts = r;
           emit(PostFavouritesSuccess(r));
+        },
+      );
+    } else {
+      emit(PostFailure("User not logged in"));
+    }
+  }
+
+  void _onFetchUserPosts(
+      PostFetchUserPosts event, Emitter<PostState> emit) async {
+    emit(PostLoading());
+
+    final currentState = _appUserCubit.state;
+    if (currentState is AppUserLoggedIn) {
+      final userId = currentState.user.id;
+      if (!event.fetchFresh && _cachedUserPosts.isNotEmpty) {
+        emit(PostUserPostsSuccess(_cachedUserPosts));
+        return;
+      }
+
+      final res = await _getUserPosts(GetUserPostsParams(userId: userId));
+
+      res.fold(
+        (l) => emit(PostFailure(l.message)),
+        (r) {
+          _cachedUserPosts = r;
+          emit(PostUserPostsSuccess(r));
         },
       );
     } else {
