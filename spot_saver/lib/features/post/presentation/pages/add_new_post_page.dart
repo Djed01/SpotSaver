@@ -131,7 +131,7 @@ class _AddNewPostPageState extends State<AddNewPostPage> {
         },
         builder: (context, state) {
           if (state is PostLoading) {
-            return const Loader(); // Display the loader
+            return const Loader();
           }
           return SingleChildScrollView(
             child: Padding(

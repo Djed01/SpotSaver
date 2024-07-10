@@ -24,6 +24,7 @@ import 'package:spot_saver/features/post/data/datasources/post_remote_data_sourc
 import 'package:spot_saver/features/post/data/repositories/post_repository_impl.dart';
 import 'package:spot_saver/features/post/domain/repositories/post_repository.dart';
 import 'package:spot_saver/features/post/domain/usecases/add_post_to_favourites.dart';
+import 'package:spot_saver/features/post/domain/usecases/delete_post.dart';
 import 'package:spot_saver/features/post/domain/usecases/get_all_posts.dart';
 import 'package:spot_saver/features/post/domain/usecases/get_favourite_posts.dart';
 import 'package:spot_saver/features/post/domain/usecases/get_user_posts.dart';

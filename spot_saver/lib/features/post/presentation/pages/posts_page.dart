@@ -1,4 +1,5 @@
 import 'package:spot_saver/core/common/widgets/loader.dart';
+import 'package:spot_saver/core/constants/constants.dart';
 import 'package:spot_saver/core/theme/app_pallete.dart';
 import 'package:spot_saver/core/utils/show_snackbar.dart';
 import 'package:spot_saver/features/auth/presentation/bloc/auth_bloc.dart';
@@ -184,7 +185,7 @@ class PostPageContent extends StatelessWidget {
                                 : index % 4 == 2
                                     ? const Color.fromRGBO(0, 0, 0, 1)
                                     : const Color.fromRGBO(0, 0, 0, 1),
-                        fromFavorites: false,
+                        sourcePage: SourcePage.home,
                       );
                     },
                   ),

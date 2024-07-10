@@ -130,6 +130,11 @@ void _initPost() {
         serviceLocator(),
       ),
     )
+    ..registerFactory(
+      () => DeletePost(
+        serviceLocator(),
+      ),
+    )
     // Bloc
     ..registerLazySingleton(
       () => PostBloc(
@@ -139,6 +144,7 @@ void _initPost() {
           getUserPosts: serviceLocator(),
           addPostToFavourites: serviceLocator(),
           removePostFromFavourites: serviceLocator(),
+          deletePost: serviceLocator(),
           appUserCubit: serviceLocator()),
     );
 }

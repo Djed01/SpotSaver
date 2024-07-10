@@ -40,3 +40,5 @@ final class PostToggleFavouriteSuccess extends PostState {
 
   PostToggleFavouriteSuccess(this.post, this.isFavourite);
 }
+
+final class PostDeleteSuccess extends PostState {}

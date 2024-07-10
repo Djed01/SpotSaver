@@ -21,6 +21,7 @@ abstract interface class PostRemoteDataSource {
     required String userId,
     required String postId,
   });
+  Future<void> deletePost({required String postId});
 }
 
 class PostRemoteDataSourceImpl implements PostRemoteDataSource {
@@ -150,6 +151,23 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
           .delete()
           .eq('user_id', userId)
           .eq('post_id', postId);
+    } on PostgrestException catch (e) {
+      throw ServerException(e.toString());
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<void> deletePost({required String postId}) async {
+    try {
+      // Delete the post image
+      await supabaseClient.storage.from('post_images').remove([postId]);
+
+      // Delete the post data
+      await supabaseClient.from('posts').delete().eq('id', postId);
+    } on StorageException catch (e) {
+      throw ServerException(e.message);
     } on PostgrestException catch (e) {
       throw ServerException(e.toString());
     } catch (e) {

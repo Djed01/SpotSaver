@@ -154,4 +154,23 @@ class PostRepositoryImpl implements PostRepository {
       return left(Failure(e.message));
     }
   }
+
+  @override
+  Future<Either<Failure, NoParams>> deletePost({
+    required String postId,
+  }) async {
+    try {
+      if (!await connectionChecker.isConnected) {
+        return left(Failure(Constants.noConnectionErrorMessage));
+      }
+
+      await postRemoteDataSource.deletePost(
+        postId: postId,
+      );
+
+      return right(NoParams());
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
 }

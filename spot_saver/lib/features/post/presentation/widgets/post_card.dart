@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:spot_saver/core/constants/constants.dart';
 import 'package:spot_saver/features/post/domain/entities/post.dart';
 import 'package:spot_saver/features/post/presentation/pages/post_view_page.dart';
 
@@ -7,21 +8,24 @@ class PostCard extends StatelessWidget {
   final Post post;
   final Color color;
   final Color textColor;
-  final bool fromFavorites;
+  final SourcePage sourcePage;
 
   const PostCard({
     super.key,
     required this.post,
     required this.color,
     required this.textColor,
-    required this.fromFavorites,
+    required this.sourcePage,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(context, PostViewPage.route(post, fromFavorites));
+        Navigator.push(
+          context,
+          PostViewPage.route(post, sourcePage),
+        );
       },
       child: Container(
         height: 350,

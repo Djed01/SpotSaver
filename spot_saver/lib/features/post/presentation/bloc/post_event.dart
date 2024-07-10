@@ -48,3 +48,9 @@ final class PostToggleFavourite extends PostEvent {
 
   PostToggleFavourite(this.postId);
 }
+
+class PostDelete extends PostEvent {
+  final String postId;
+
+  PostDelete({required this.postId});
+}

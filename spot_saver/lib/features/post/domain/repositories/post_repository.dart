@@ -25,6 +25,10 @@ abstract interface class PostRepository {
     required String postId,
   });
 
+  Future<Either<Failure, NoParams>> deletePost({
+    required String postId,
+  });
+
   Future<Either<Failure, List<Post>>> getAllPosts();
 
   Future<Either<Failure, List<Post>>> getFavouritePosts(String userId);
