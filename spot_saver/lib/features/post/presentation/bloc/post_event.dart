@@ -54,3 +54,25 @@ class PostDelete extends PostEvent {
 
   PostDelete({required this.postId});
 }
+
+final class PostUpdate extends PostEvent {
+  final String postId;
+  final String posterId;
+  final String title;
+  final String content;
+  final File? image;
+  final String imageUrl;
+  final List<String> categories;
+  final double latitude;
+  final double longitude;
+  PostUpdate(
+      {required this.postId,
+      required this.posterId,
+      required this.title,
+      required this.content,
+      required this.image,
+      required this.imageUrl,
+      required this.categories,
+      required this.latitude,
+      required this.longitude});
+}

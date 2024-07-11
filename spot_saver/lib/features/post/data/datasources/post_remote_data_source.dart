@@ -1,10 +1,9 @@
 import 'dart:io';
-
 import 'package:spot_saver/core/error/exceptions.dart';
 import 'package:spot_saver/features/post/data/models/post_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-abstract interface class PostRemoteDataSource {
+abstract class PostRemoteDataSource {
   Future<PostModel> uploadPost(PostModel post);
   Future<String> uploadPostImage({
     required File image,
@@ -22,10 +21,12 @@ abstract interface class PostRemoteDataSource {
     required String postId,
   });
   Future<void> deletePost({required String postId});
+  Future<PostModel> updatePost(PostModel post, {File? newImage});
 }
 
 class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   final SupabaseClient supabaseClient;
+
   PostRemoteDataSourceImpl(this.supabaseClient);
 
   @override
@@ -43,8 +44,10 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   }
 
   @override
-  Future<String> uploadPostImage(
-      {required File image, required PostModel post}) async {
+  Future<String> uploadPostImage({
+    required File image,
+    required PostModel post,
+  }) async {
     try {
       await supabaseClient.storage.from('post_images').upload(
             post.id,
@@ -121,8 +124,10 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   }
 
   @override
-  Future<PostModel> addPostToFavourites(
-      {required String userId, required String postId}) async {
+  Future<PostModel> addPostToFavourites({
+    required String userId,
+    required String postId,
+  }) async {
     try {
       final data = {
         'user_id': userId,
@@ -170,6 +175,37 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       throw ServerException(e.message);
     } on PostgrestException catch (e) {
       throw ServerException(e.toString());
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<PostModel> updatePost(PostModel post, {File? newImage}) async {
+    try {
+      // Check if a new image is provided
+      if (newImage != null) {
+        // Delete the old image if it exists
+        if (post.imageUrl.isNotEmpty) {
+          await supabaseClient.storage.from('post_images').remove([post.id]);
+        }
+
+        // Upload the new image
+        final imageUrl = await uploadPostImage(image: newImage, post: post);
+        post = post.copyWith(imageUrl: imageUrl);
+      }
+
+      // Update the post data
+      final postData = await supabaseClient
+          .from('posts')
+          .update(post.toJson())
+          .eq('id', post.id)
+          .select()
+          .single();
+
+      return PostModel.fromJson(postData);
+    } on PostgrestException catch (e) {
+      throw ServerException(e.message);
     } catch (e) {
       throw ServerException(e.toString());
     }

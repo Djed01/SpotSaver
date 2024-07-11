@@ -135,6 +135,11 @@ void _initPost() {
         serviceLocator(),
       ),
     )
+    ..registerFactory(
+      () => UpdatePost(
+        serviceLocator(),
+      ),
+    )
     // Bloc
     ..registerLazySingleton(
       () => PostBloc(
@@ -145,6 +150,7 @@ void _initPost() {
           addPostToFavourites: serviceLocator(),
           removePostFromFavourites: serviceLocator(),
           deletePost: serviceLocator(),
+          updatePost: serviceLocator(),
           appUserCubit: serviceLocator()),
     );
 }

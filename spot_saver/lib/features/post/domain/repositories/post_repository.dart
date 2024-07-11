@@ -34,4 +34,15 @@ abstract interface class PostRepository {
   Future<Either<Failure, List<Post>>> getFavouritePosts(String userId);
 
   Future<Either<Failure, List<Post>>> getUserPosts(String userId);
+
+  Future<Either<Failure, Post>> updatePost(
+      {required File? image,
+      required String imageUrl,
+      required String postId,
+      required String title,
+      required String content,
+      required String posterId,
+      required double latitude,
+      required double longitude,
+      required List<String> categories});
 }

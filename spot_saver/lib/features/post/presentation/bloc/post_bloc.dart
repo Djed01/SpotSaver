@@ -8,6 +8,7 @@ import 'package:spot_saver/features/post/domain/usecases/get_all_posts.dart';
 import 'package:spot_saver/features/post/domain/usecases/get_favourite_posts.dart';
 import 'package:spot_saver/features/post/domain/usecases/get_user_posts.dart';
 import 'package:spot_saver/features/post/domain/usecases/remove_post_from_favourites.dart';
+import 'package:spot_saver/features/post/domain/usecases/update_post.dart';
 import 'package:spot_saver/features/post/domain/usecases/upload_post.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,6 +24,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   final AddPostToFavourites _addPostToFavourites;
   final RemovePostFromFavourites _removePostFromFavourites;
   final DeletePost _deletePost;
+  final UpdatePost _updatePost;
   final AppUserCubit _appUserCubit;
   List<Post> _cachedPosts = [];
   List<Post> _cachedFavouritePosts = [];
@@ -36,6 +38,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     required AddPostToFavourites addPostToFavourites,
     required RemovePostFromFavourites removePostFromFavourites,
     required DeletePost deletePost,
+    required UpdatePost updatePost,
     required AppUserCubit appUserCubit,
   })  : _uploadPost = uploadPost,
         _getAllPosts = getAllPosts,
@@ -44,14 +47,16 @@ class PostBloc extends Bloc<PostEvent, PostState> {
         _addPostToFavourites = addPostToFavourites,
         _removePostFromFavourites = removePostFromFavourites,
         _deletePost = deletePost,
+        _updatePost = updatePost,
         _appUserCubit = appUserCubit,
         super(PostInitial()) {
-    on<PostUpload>(_onPostUpload);
+    on<PostUpload>(_onUpload);
     on<PostFetchAllPosts>(_onFetchAllPosts);
     on<PostFilterByCategories>(_onFilterByCategories);
     on<PostFetchFavouritePosts>(_onFetchFavouritePosts);
     on<PostToggleFavourite>(_onToggleFavourite);
-    on<PostDelete>(_onDeletePost);
+    on<PostDelete>(_onDelete);
+    on<PostUpdate>(_onUpdate);
     on<PostFetchUserPosts>(_onFetchUserPosts);
 
     // Load Posts and favourites when bloc is initialized
@@ -60,7 +65,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     add(PostFetchUserPosts(fetchFresh: true));
   }
 
-  void _onPostUpload(PostUpload event, Emitter<PostState> emit) async {
+  void _onUpload(PostUpload event, Emitter<PostState> emit) async {
     final res = await _uploadPost(UploadPostParams(
         posterId: event.posterId,
         title: event.title,
@@ -209,7 +214,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     }
   }
 
-  void _onDeletePost(PostDelete event, Emitter<PostState> emit) async {
+  void _onDelete(PostDelete event, Emitter<PostState> emit) async {
     emit(PostLoading());
 
     final res = await _deletePost(DeletePostParams(postId: event.postId));
@@ -223,5 +228,21 @@ class PostBloc extends Bloc<PostEvent, PostState> {
         emit(PostDeleteSuccess());
       },
     );
+  }
+
+  void _onUpdate(PostUpdate event, Emitter<PostState> emit) async {
+    final res = await _updatePost(UpdatePostParams(
+        postId: event.postId,
+        posterId: event.posterId,
+        title: event.title,
+        content: event.content,
+        image: event.image,
+        imageUrl: event.imageUrl,
+        categories: event.categories,
+        latitude: event.latitude,
+        longitude: event.longitude));
+
+    res.fold(
+        (l) => emit(PostFailure(l.message)), (r) => emit(PostUpdateSuccess()));
   }
 }

@@ -10,6 +10,7 @@ import 'package:spot_saver/core/utils/format_date.dart';
 import 'package:spot_saver/features/post/domain/entities/post.dart';
 import 'package:spot_saver/features/post/presentation/bloc/post_bloc.dart';
 import 'package:spot_saver/core/common/widgets/loader.dart';
+import 'package:spot_saver/features/post/presentation/pages/edit_post_page.dart';
 
 class PostViewPage extends StatefulWidget {
   static route(Post post, SourcePage sourcePage) => MaterialPageRoute(
@@ -191,21 +192,45 @@ class PostViewPageState extends State<PostViewPage>
                                 ),
                               ],
                             ),
-                            BlocBuilder<AppUserCubit, AppUserState>(
-                              builder: (context, state) {
-                                if (state is AppUserLoggedIn &&
-                                    state.user.id == widget.post.posterId) {
-                                  return IconButton(
-                                    icon: const Icon(Icons.delete,
-                                        color: Colors.red),
-                                    onPressed: () {
-                                      _showDeleteConfirmationDialog(context);
-                                    },
-                                  );
-                                } else {
-                                  return const SizedBox.shrink();
-                                }
-                              },
+                            Row(
+                              children: [
+                                BlocBuilder<AppUserCubit, AppUserState>(
+                                  builder: (context, state) {
+                                    if (state is AppUserLoggedIn &&
+                                        state.user.id == widget.post.posterId) {
+                                      return IconButton(
+                                        icon: const Icon(Icons.edit,
+                                            color: Colors.blue),
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            EditPostPage.route(widget.post),
+                                          );
+                                        },
+                                      );
+                                    } else {
+                                      return const SizedBox.shrink();
+                                    }
+                                  },
+                                ),
+                                BlocBuilder<AppUserCubit, AppUserState>(
+                                  builder: (context, state) {
+                                    if (state is AppUserLoggedIn &&
+                                        state.user.id == widget.post.posterId) {
+                                      return IconButton(
+                                        icon: const Icon(Icons.delete,
+                                            color: Colors.red),
+                                        onPressed: () {
+                                          _showDeleteConfirmationDialog(
+                                              context);
+                                        },
+                                      );
+                                    } else {
+                                      return const SizedBox.shrink();
+                                    }
+                                  },
+                                ),
+                              ],
                             ),
                           ],
                         ),

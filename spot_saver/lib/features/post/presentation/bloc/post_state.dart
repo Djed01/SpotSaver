@@ -42,3 +42,5 @@ final class PostToggleFavouriteSuccess extends PostState {
 }
 
 final class PostDeleteSuccess extends PostState {}
+
+final class PostUpdateSuccess extends PostState {}

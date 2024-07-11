@@ -7,7 +7,7 @@ import 'package:spot_saver/features/auth/presentation/pages/login_page.dart';
 import 'package:spot_saver/features/post/presentation/bloc/post_bloc.dart';
 import 'package:spot_saver/features/post/presentation/pages/add_new_post_page.dart';
 import 'package:spot_saver/features/post/presentation/pages/favourite_posts_page.dart';
-import 'package:spot_saver/features/post/presentation/pages/user_posts.dart';
+import 'package:spot_saver/features/post/presentation/pages/user_posts_page.dart';
 import 'package:spot_saver/features/post/presentation/widgets/post_card.dart';
 import 'package:spot_saver/features/post/presentation/widgets/post_category_widget.dart';
 import 'package:flutter/cupertino.dart';

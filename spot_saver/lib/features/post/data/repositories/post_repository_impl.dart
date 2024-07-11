@@ -173,4 +173,41 @@ class PostRepositoryImpl implements PostRepository {
       return left(Failure(e.message));
     }
   }
+
+  @override
+  Future<Either<Failure, Post>> updatePost({
+    required File? image,
+    required String imageUrl,
+    required String postId,
+    required String title,
+    required String content,
+    required String posterId,
+    required double latitude,
+    required double longitude,
+    required List<String> categories,
+  }) async {
+    try {
+      if (!await connectionChecker.isConnected) {
+        return left(Failure(Constants.noConnectionErrorMessage));
+      }
+
+      PostModel postModel = PostModel(
+        id: postId,
+        posterId: posterId,
+        title: title,
+        content: content,
+        imageUrl: imageUrl,
+        categories: categories,
+        latitude: latitude,
+        longitude: longitude,
+        updatedAt: DateTime.now(),
+      );
+
+      final updatedPost =
+          await postRemoteDataSource.updatePost(postModel, newImage: image);
+      return right(updatedPost);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
 }

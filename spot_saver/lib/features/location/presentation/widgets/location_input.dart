@@ -3,13 +3,20 @@ import 'package:get_it/get_it.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:spot_saver/core/secrets/app_secrets.dart';
 import 'package:spot_saver/core/usecase/usecase.dart';
-import '../pages/map_page.dart';
 import 'package:spot_saver/features/location/domain/usecases/get_current_location.dart';
+import '../pages/map_page.dart';
 
 class LocationInput extends StatefulWidget {
   final Function(double, double) onSelectLocation;
+  final double? initialLatitude;
+  final double? initialLongitude;
 
-  const LocationInput({super.key, required this.onSelectLocation});
+  const LocationInput({
+    super.key,
+    required this.onSelectLocation,
+    this.initialLatitude,
+    this.initialLongitude,
+  });
 
   @override
   _LocationInputState createState() => _LocationInputState();
@@ -18,6 +25,15 @@ class LocationInput extends StatefulWidget {
 class _LocationInputState extends State<LocationInput> {
   LatLng? _pickedLocation;
   bool _isGettingLocation = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialLatitude != null && widget.initialLongitude != null) {
+      _pickedLocation =
+          LatLng(widget.initialLatitude!, widget.initialLongitude!);
+    }
+  }
 
   void _getCurrentLocation() async {
     final getCurrentLocation = GetIt.instance<GetCurrentLocation>();
@@ -83,7 +99,9 @@ class _LocationInputState extends State<LocationInput> {
           alignment: Alignment.center,
           decoration: BoxDecoration(
             border: Border.all(
-                width: 1, color: Theme.of(context).colorScheme.primary),
+              width: 1,
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
           child: _isGettingLocation
               ? const CircularProgressIndicator()
@@ -105,16 +123,20 @@ class _LocationInputState extends State<LocationInput> {
             Expanded(
               child: TextButton.icon(
                 icon: const Icon(Icons.location_on),
-                label: const Text('Get current location',
-                    overflow: TextOverflow.ellipsis),
+                label: const Text(
+                  'Get current location',
+                  overflow: TextOverflow.ellipsis,
+                ),
                 onPressed: _getCurrentLocation,
               ),
             ),
             Expanded(
               child: TextButton.icon(
                 icon: const Icon(Icons.map),
-                label: const Text('Select on map',
-                    overflow: TextOverflow.ellipsis),
+                label: const Text(
+                  'Select on map',
+                  overflow: TextOverflow.ellipsis,
+                ),
                 onPressed: _selectOnMap,
               ),
             ),
