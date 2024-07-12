@@ -21,6 +21,12 @@ abstract interface class AuthRemoteDataSource {
   Future<Either<Failure, NoParams>> logout();
 
   Future<UserModel?> getCurrentUserData();
+
+  Future<void> changePassword({
+    required String email,
+    required String oldPassword,
+    required String newPassword,
+  });
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -99,6 +105,35 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       }
 
       return null;
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<void> changePassword({
+    required String email,
+    required String oldPassword,
+    required String newPassword,
+  }) async {
+    try {
+      // Re-authenticate the user with the old password
+      final currentEmail = currentUserSession!.user.email;
+      final response = await supabaseClient.auth.signInWithPassword(
+        email: currentEmail,
+        password: oldPassword,
+      );
+
+      // If authentication is successful, update the password
+      if (response.user != null) {
+        await supabaseClient.auth.updateUser(
+          UserAttributes(password: newPassword),
+        );
+      } else {
+        throw const ServerException('Old password is incorrect!');
+      }
+    } on AuthException catch (e) {
+      throw ServerException(e.message);
     } catch (e) {
       throw ServerException(e.toString());
     }

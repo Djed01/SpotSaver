@@ -1,6 +1,7 @@
 import 'package:spot_saver/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:spot_saver/core/usecase/usecase.dart';
 import 'package:spot_saver/core/common/entities/user.dart';
+import 'package:spot_saver/features/auth/domain/usecases/change_password.dart';
 import 'package:spot_saver/features/auth/domain/usecases/current_user.dart';
 import 'package:spot_saver/features/auth/domain/usecases/user_login.dart';
 import 'package:spot_saver/features/auth/domain/usecases/user_logout.dart';
@@ -16,17 +17,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final UserLogin _userLogin;
   final UserLogout _userLogout;
   final CurrentUser _currentUser;
+  final ChangePassword _changePassword;
   final AppUserCubit _appUserCubit;
   AuthBloc({
     required UserSignUp userSignUp,
     required UserLogin userLogin,
     required UserLogout userLogout,
     required CurrentUser currentUser,
+    required ChangePassword changePassword,
     required AppUserCubit appUserCubit,
   })  : _userSignUp = userSignUp,
         _userLogin = userLogin,
         _userLogout = userLogout,
         _currentUser = currentUser,
+        _changePassword = changePassword,
         _appUserCubit = appUserCubit,
         super(AuthInitial()) {
     on<AuthEvent>((_, emit) => emit(AuthLoading()));
@@ -34,6 +38,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthLogin>(_onAuthLogin);
     on<AuthIsUserLoggedIn>(_isUserLoggedIn);
     on<AuthLogout>(_onAuthLogout);
+    on<AuthChangePassword>(_onAuthChangePassword);
   }
 
   void _isUserLoggedIn(
@@ -71,5 +76,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   void _emitAuthSuccess(User user, Emitter<AuthState> emit) {
     _appUserCubit.updateUser(user);
     emit(AuthSuccess(user));
+  }
+
+  void _onAuthChangePassword(
+      AuthChangePassword event, Emitter<AuthState> emit) async {
+    final res = await _changePassword(ChangePasswordParams(
+      email: event.email,
+      oldPassword: event.oldPassword,
+      newPassword: event.newPassword,
+    ));
+
+    res.fold(
+      (l) => emit(AuthFailure(l.message)),
+      (r) => emit(AuthChangePasswordSuccess()),
+    );
   }
 }

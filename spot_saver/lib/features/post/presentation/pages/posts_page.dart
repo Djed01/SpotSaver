@@ -3,11 +3,13 @@ import 'package:spot_saver/core/constants/constants.dart';
 import 'package:spot_saver/core/theme/app_pallete.dart';
 import 'package:spot_saver/core/utils/show_snackbar.dart';
 import 'package:spot_saver/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:spot_saver/features/auth/presentation/pages/change_password.dart';
 import 'package:spot_saver/features/auth/presentation/pages/login_page.dart';
 import 'package:spot_saver/features/post/presentation/bloc/post_bloc.dart';
 import 'package:spot_saver/features/post/presentation/pages/add_new_post_page.dart';
 import 'package:spot_saver/features/post/presentation/pages/favourite_posts_page.dart';
 import 'package:spot_saver/features/post/presentation/pages/user_posts_page.dart';
+import 'package:spot_saver/features/post/presentation/widgets/main_drawer.dart';
 import 'package:spot_saver/features/post/presentation/widgets/post_card.dart';
 import 'package:spot_saver/features/post/presentation/widgets/post_category_widget.dart';
 import 'package:flutter/cupertino.dart';
@@ -78,6 +80,17 @@ class _PostsPageState extends State<PostsPage> {
     }
   }
 
+  void _handleDrawerSelection(String identifier) {
+    Navigator.of(context).pop(); // Close the drawer
+    if (identifier == 'change_password') {
+      Navigator.push(context, ChangePasswordPage.route());
+    } else if (identifier == 'logout') {
+      context.read<AuthBloc>().add(AuthLogout());
+      Navigator.pushAndRemoveUntil(
+          context, LoginPage.route(), (route) => false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,13 +98,11 @@ class _PostsPageState extends State<PostsPage> {
           ? AppBar(
               title: const Text('Spot Saver'),
               centerTitle: true,
-              leading: IconButton(
-                onPressed: () {
-                  context.read<AuthBloc>().add(AuthLogout());
-                  Navigator.pushAndRemoveUntil(
-                      context, LoginPage.route(), (route) => false);
-                },
-                icon: const Icon(Icons.logout),
+              leading: Builder(
+                builder: (context) => IconButton(
+                  icon: const Icon(Icons.menu),
+                  onPressed: () => Scaffold.of(context).openDrawer(),
+                ),
               ),
               actions: [
                 IconButton(
@@ -105,6 +116,7 @@ class _PostsPageState extends State<PostsPage> {
               ],
             )
           : null,
+      drawer: MainDrawer(onSelectScreen: _handleDrawerSelection),
       body: RefreshIndicator(
         onRefresh: () {
           if (_currentIndex == 0) {

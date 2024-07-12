@@ -20,3 +20,5 @@ final class AuthFailure extends AuthState {
   final String message;
   const AuthFailure(this.message);
 }
+
+final class AuthChangePasswordSuccess extends AuthState {}

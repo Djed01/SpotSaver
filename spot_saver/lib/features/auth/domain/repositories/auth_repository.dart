@@ -18,4 +18,10 @@ abstract interface class AuthRepository {
   Future<Either<Failure, NoParams>> logout();
 
   Future<Either<Failure, User>> currentUser();
+
+  Future<Either<Failure, void>> changePassword({
+    required String email,
+    required String oldPassword,
+    required String newPassword,
+  });
 }

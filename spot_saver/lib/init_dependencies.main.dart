@@ -64,6 +64,11 @@ void _initAuth() {
       ),
     )
     ..registerFactory(
+      () => ChangePassword(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
       () => CurrentUser(
         serviceLocator(),
       ),
@@ -74,6 +79,7 @@ void _initAuth() {
         userSignUp: serviceLocator(),
         userLogin: serviceLocator(),
         userLogout: serviceLocator(),
+        changePassword: serviceLocator(),
         currentUser: serviceLocator(),
         appUserCubit: serviceLocator(),
       ),

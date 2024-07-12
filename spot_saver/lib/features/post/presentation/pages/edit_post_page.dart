@@ -145,9 +145,9 @@ class _EditPostPageState extends State<EditPostPage> {
             });
             showSnackBar(context, state.error);
           } else if (state is PostUpdateSuccess) {
-            setState(() {
-              isLoading = false;
-            });
+            // setState(() {
+            //   isLoading = false;
+            // });
             Navigator.pushAndRemoveUntil(
               context,
               PostsPage.route(),
