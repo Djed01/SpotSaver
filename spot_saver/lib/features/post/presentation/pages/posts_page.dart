@@ -67,7 +67,7 @@ class _PostsPageState extends State<PostsPage> {
       isLoading = true;
     });
 
-    context.read<PostBloc>().add(PostFetchPosts(page));
+    context.read<PostBloc>().add(PostFetchPosts(page, selectedCategories));
   }
 
   void _onPostsFetched(List<Post> newPosts) {
@@ -83,7 +83,7 @@ class _PostsPageState extends State<PostsPage> {
 
   Future<void> _refreshPostData() async {
     setState(() {
-      page = 0; // Reset page to 0
+      page = 0;
       posts.clear();
       hasMore = true;
     });
@@ -102,14 +102,14 @@ class _PostsPageState extends State<PostsPage> {
     setState(() {
       selectedCategories.add(category);
     });
-    context.read<PostBloc>().add(PostFilterByCategories(selectedCategories));
+    _refreshPostData();
   }
 
   void _onCategoryDeselected(String category) {
     setState(() {
       selectedCategories.remove(category);
     });
-    context.read<PostBloc>().add(PostFilterByCategories(selectedCategories));
+    _refreshPostData();
   }
 
   void _onNavBarTapped(int index) {
@@ -209,27 +209,43 @@ class PostPageContent extends StatelessWidget {
                 false;
 
         if (state is PostLoading && posts.isEmpty) {
-          return const Loader();
+          return Column(
+            children: [
+              PostCategoryWidget(
+                selectedCategories:
+                    (context.findAncestorStateOfType<_PostsPageState>())!
+                        .selectedCategories,
+                onCategorySelected:
+                    (context.findAncestorStateOfType<_PostsPageState>())!
+                        ._onCategorySelected,
+                onCategoryDeselected:
+                    (context.findAncestorStateOfType<_PostsPageState>())!
+                        ._onCategoryDeselected,
+              ),
+              const SizedBox(height: 16),
+              const Loader(),
+            ],
+          );
         }
 
         return Column(
           children: [
             PostCategoryWidget(
               selectedCategories:
-                  (context.findAncestorStateOfType<_PostsPageState>()!)
+                  (context.findAncestorStateOfType<_PostsPageState>())!
                       .selectedCategories,
               onCategorySelected:
-                  (context.findAncestorStateOfType<_PostsPageState>()!)
+                  (context.findAncestorStateOfType<_PostsPageState>())!
                       ._onCategorySelected,
               onCategoryDeselected:
-                  (context.findAncestorStateOfType<_PostsPageState>()!)
+                  (context.findAncestorStateOfType<_PostsPageState>())!
                       ._onCategoryDeselected,
             ),
             Expanded(
               child: Scrollbar(
                 child: ListView.builder(
                   controller:
-                      (context.findAncestorStateOfType<_PostsPageState>()!)
+                      (context.findAncestorStateOfType<_PostsPageState>())!
                           .controller,
                   itemCount: posts.length + 1,
                   itemBuilder: (context, index) {

@@ -65,7 +65,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     on<PostFetchUserPosts>(_onFetchUserPosts);
 
     // Load Posts and favourites when bloc is initialized
-    add(PostFetchPosts(0));
+    add(PostFetchPosts(0, const []));
     add(PostFetchFavouritePosts(fetchFresh: true));
     add(PostFetchUserPosts(fetchFresh: true));
   }
@@ -107,7 +107,8 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   void _onFetchPosts(PostFetchPosts event, Emitter<PostState> emit) async {
     if (event.pageKey == 0) emit(PostLoading());
 
-    final res = await _getPosts(PaginationParams(event.pageKey));
+    final res =
+        await _getPosts(PaginationParams(event.pageKey, event.categories));
 
     res.fold(
       (l) => emit(PostFailure(l.message)),

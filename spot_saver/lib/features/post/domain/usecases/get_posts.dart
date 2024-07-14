@@ -11,12 +11,13 @@ class GetPosts implements UseCase<List<Post>, PaginationParams> {
 
   @override
   Future<Either<Failure, List<Post>>> call(PaginationParams params) async {
-    return await postRepository.getPosts(params.pageKey);
+    return await postRepository.getPosts(params.pageKey, params.categories);
   }
 }
 
 class PaginationParams {
   final int pageKey;
+  final List<String> categories;
 
-  PaginationParams(this.pageKey);
+  PaginationParams(this.pageKey, this.categories);
 }

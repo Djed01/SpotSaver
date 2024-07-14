@@ -11,7 +11,7 @@ abstract class PostRemoteDataSource {
     required PostModel post,
   });
   Future<List<PostModel>> getAllPosts();
-  Future<List<PostModel>> getPosts(int pageKey);
+  Future<List<PostModel>> getPosts(int pageKey, List<String> categories);
   Future<List<PostModel>> getFavouritesPosts(String userId);
   Future<List<PostModel>> getUserPosts(String userId);
   Future<PostModel> addPostToFavourites({
@@ -82,18 +82,17 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   }
 
   @override
-  Future<List<PostModel>> getPosts(int pageKey) async {
+  Future<List<PostModel>> getPosts(int pageKey, List<String> categories) async {
     try {
       // Calculate pagination parameters based on pageKey
-      int start =
-          pageKey * Constants.numberOfPostsPerRequest; // Calculate start index
-      int end =
-          start + Constants.numberOfPostsPerRequest - 1; // Calculate end index
+      int start = pageKey * Constants.numberOfPostsPerRequest; // Start index
+      int end = start + Constants.numberOfPostsPerRequest - 1; // End index
 
       // Fetch posts from Supabase with pagination and ordering
       final posts = await supabaseClient
           .from('posts')
           .select('*, profiles (name)')
+          .filter('categories', 'cs', categories)
           .order('updated_at', ascending: false)
           .range(start, end);
 

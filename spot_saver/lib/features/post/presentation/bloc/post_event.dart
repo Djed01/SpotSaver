@@ -29,7 +29,8 @@ class PostFetchAllPosts extends PostEvent {
 
 class PostFetchPosts extends PostEvent {
   final int pageKey;
-  PostFetchPosts(this.pageKey);
+  final List<String> categories;
+  PostFetchPosts(this.pageKey, this.categories);
 }
 
 final class PostFilterByCategories extends PostEvent {
