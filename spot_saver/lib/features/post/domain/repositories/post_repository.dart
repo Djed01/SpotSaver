@@ -31,6 +31,8 @@ abstract interface class PostRepository {
 
   Future<Either<Failure, List<Post>>> getAllPosts();
 
+  Future<Either<Failure, List<Post>>> getPosts(int pageKey);
+
   Future<Either<Failure, List<Post>>> getFavouritePosts(String userId);
 
   Future<Either<Failure, List<Post>>> getUserPosts(String userId);

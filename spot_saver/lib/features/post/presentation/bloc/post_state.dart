@@ -19,6 +19,11 @@ final class PostDisplaySuccess extends PostState {
   PostDisplaySuccess(this.posts);
 }
 
+final class PostFetchPostsSuccess extends PostState {
+  final List<Post> posts;
+  PostFetchPostsSuccess(this.posts);
+}
+
 final class PostFilteredSuccess extends PostState {
   final List<Post> filteredPosts;
   PostFilteredSuccess(this.filteredPosts);

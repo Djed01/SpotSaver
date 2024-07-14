@@ -6,6 +6,7 @@ import 'package:spot_saver/features/post/domain/usecases/add_post_to_favourites.
 import 'package:spot_saver/features/post/domain/usecases/delete_post.dart';
 import 'package:spot_saver/features/post/domain/usecases/get_all_posts.dart';
 import 'package:spot_saver/features/post/domain/usecases/get_favourite_posts.dart';
+import 'package:spot_saver/features/post/domain/usecases/get_posts.dart';
 import 'package:spot_saver/features/post/domain/usecases/get_user_posts.dart';
 import 'package:spot_saver/features/post/domain/usecases/remove_post_from_favourites.dart';
 import 'package:spot_saver/features/post/domain/usecases/update_post.dart';
@@ -19,6 +20,7 @@ part 'post_state.dart';
 class PostBloc extends Bloc<PostEvent, PostState> {
   final UploadPost _uploadPost;
   final GetAllPosts _getAllPosts;
+  final GetPosts _getPosts;
   final GetFavouritePosts _getFavouritePosts;
   final GetUserPosts _getUserPosts;
   final AddPostToFavourites _addPostToFavourites;
@@ -33,6 +35,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   PostBloc({
     required UploadPost uploadPost,
     required GetAllPosts getAllPosts,
+    required GetPosts getPosts,
     required GetFavouritePosts getFavouritePosts,
     required GetUserPosts getUserPosts,
     required AddPostToFavourites addPostToFavourites,
@@ -42,6 +45,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     required AppUserCubit appUserCubit,
   })  : _uploadPost = uploadPost,
         _getAllPosts = getAllPosts,
+        _getPosts = getPosts,
         _getFavouritePosts = getFavouritePosts,
         _getUserPosts = getUserPosts,
         _addPostToFavourites = addPostToFavourites,
@@ -52,6 +56,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
         super(PostInitial()) {
     on<PostUpload>(_onUpload);
     on<PostFetchAllPosts>(_onFetchAllPosts);
+    on<PostFetchPosts>(_onFetchPosts);
     on<PostFilterByCategories>(_onFilterByCategories);
     on<PostFetchFavouritePosts>(_onFetchFavouritePosts);
     on<PostToggleFavourite>(_onToggleFavourite);
@@ -60,7 +65,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     on<PostFetchUserPosts>(_onFetchUserPosts);
 
     // Load Posts and favourites when bloc is initialized
-    add(PostFetchAllPosts(fetchFresh: true));
+    add(PostFetchPosts(0));
     add(PostFetchFavouritePosts(fetchFresh: true));
     add(PostFetchUserPosts(fetchFresh: true));
   }
@@ -96,6 +101,17 @@ class PostBloc extends Bloc<PostEvent, PostState> {
         _cachedPosts = r;
         emit(PostDisplaySuccess(r));
       },
+    );
+  }
+
+  void _onFetchPosts(PostFetchPosts event, Emitter<PostState> emit) async {
+    if (event.pageKey == 0) emit(PostLoading());
+
+    final res = await _getPosts(PaginationParams(event.pageKey));
+
+    res.fold(
+      (l) => emit(PostFailure(l.message)),
+      (r) => emit(PostFetchPostsSuccess(r)),
     );
   }
 

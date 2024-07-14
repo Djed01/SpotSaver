@@ -8,6 +8,8 @@ class Constants {
   ];
 
   static const noConnectionErrorMessage = 'Not connected to a network!';
+
+  static const int numberOfPostsPerRequest = 2;
 }
 
 enum SourcePage {
@@ -15,4 +17,3 @@ enum SourcePage {
   favourites,
   myposts,
 }
-

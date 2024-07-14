@@ -5,6 +5,7 @@ import 'package:spot_saver/core/utils/show_snackbar.dart';
 import 'package:spot_saver/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:spot_saver/features/auth/presentation/pages/change_password.dart';
 import 'package:spot_saver/features/auth/presentation/pages/login_page.dart';
+import 'package:spot_saver/features/post/domain/entities/post.dart';
 import 'package:spot_saver/features/post/presentation/bloc/post_bloc.dart';
 import 'package:spot_saver/features/post/presentation/pages/add_new_post_page.dart';
 import 'package:spot_saver/features/post/presentation/pages/favourite_posts_page.dart';
@@ -27,6 +28,11 @@ class PostsPage extends StatefulWidget {
 }
 
 class _PostsPageState extends State<PostsPage> {
+  final controller = ScrollController();
+  int page = 0;
+  bool isLoading = false;
+  bool hasMore = true;
+  List<Post> posts = [];
   List<String> selectedCategories = [];
   int _currentIndex = 0;
   final List<Widget> _pages = [
@@ -38,11 +44,50 @@ class _PostsPageState extends State<PostsPage> {
   @override
   void initState() {
     super.initState();
-    context.read<PostBloc>().add(PostFetchAllPosts());
+    controller.addListener(_scrollListener);
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  void _scrollListener() {
+    if (controller.position.pixels >= controller.position.maxScrollExtent &&
+        !isLoading &&
+        hasMore) {
+      _fetchPosts();
+    }
+  }
+
+  Future<void> _fetchPosts() async {
+    if (isLoading) return;
+    setState(() {
+      isLoading = true;
+    });
+
+    context.read<PostBloc>().add(PostFetchPosts(page));
+  }
+
+  void _onPostsFetched(List<Post> newPosts) {
+    setState(() {
+      if (newPosts.length < Constants.numberOfPostsPerRequest) {
+        hasMore = false;
+      }
+      page++;
+      posts.addAll(newPosts);
+      isLoading = false;
+    });
   }
 
   Future<void> _refreshPostData() async {
-    context.read<PostBloc>().add(PostFetchAllPosts(fetchFresh: true));
+    setState(() {
+      page = 0; // Reset page to 0
+      posts.clear();
+      hasMore = true;
+    });
+    await _fetchPosts();
   }
 
   Future<void> _refreshFavouritesData() async {
@@ -151,35 +196,44 @@ class PostPageContent extends StatelessWidget {
       listener: (context, state) {
         if (state is PostFailure) {
           showSnackBar(context, state.error);
+        } else if (state is PostFetchPostsSuccess) {
+          (context.findAncestorStateOfType<_PostsPageState>())
+              ?._onPostsFetched(state.posts);
         }
       },
       builder: (context, state) {
-        if (state is PostLoading) {
+        final posts =
+            (context.findAncestorStateOfType<_PostsPageState>())?.posts ?? [];
+        final hasMore =
+            (context.findAncestorStateOfType<_PostsPageState>())?.hasMore ??
+                false;
+
+        if (state is PostLoading && posts.isEmpty) {
           return const Loader();
         }
-        if (state is PostDisplaySuccess || state is PostFilteredSuccess) {
-          final posts = state is PostDisplaySuccess
-              ? state.posts
-              : (state as PostFilteredSuccess).filteredPosts;
 
-          return Column(
-            children: [
-              PostCategoryWidget(
-                selectedCategories:
-                    (context.findAncestorStateOfType<_PostsPageState>()!)
-                        .selectedCategories,
-                onCategorySelected:
-                    (context.findAncestorStateOfType<_PostsPageState>()!)
-                        ._onCategorySelected,
-                onCategoryDeselected:
-                    (context.findAncestorStateOfType<_PostsPageState>()!)
-                        ._onCategoryDeselected,
-              ),
-              Expanded(
-                child: Scrollbar(
-                  child: ListView.builder(
-                    itemCount: posts.length,
-                    itemBuilder: (context, index) {
+        return Column(
+          children: [
+            PostCategoryWidget(
+              selectedCategories:
+                  (context.findAncestorStateOfType<_PostsPageState>()!)
+                      .selectedCategories,
+              onCategorySelected:
+                  (context.findAncestorStateOfType<_PostsPageState>()!)
+                      ._onCategorySelected,
+              onCategoryDeselected:
+                  (context.findAncestorStateOfType<_PostsPageState>()!)
+                      ._onCategoryDeselected,
+            ),
+            Expanded(
+              child: Scrollbar(
+                child: ListView.builder(
+                  controller:
+                      (context.findAncestorStateOfType<_PostsPageState>()!)
+                          .controller,
+                  itemCount: posts.length + 1,
+                  itemBuilder: (context, index) {
+                    if (index < posts.length) {
                       final post = posts[index];
                       return PostCard(
                         post: post,
@@ -199,14 +253,22 @@ class PostPageContent extends StatelessWidget {
                                     : const Color.fromRGBO(0, 0, 0, 1),
                         sourcePage: SourcePage.home,
                       );
-                    },
-                  ),
+                    } else {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 32),
+                        child: Center(
+                          child: hasMore
+                              ? const CircularProgressIndicator()
+                              : const Text('No more data to load'),
+                        ),
+                      );
+                    }
+                  },
                 ),
               ),
-            ],
-          );
-        }
-        return const SizedBox();
+            ),
+          ],
+        );
       },
     );
   }

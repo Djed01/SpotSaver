@@ -117,6 +117,11 @@ void _initPost() {
       ),
     )
     ..registerFactory(
+      () => GetPosts(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
       () => GetFavouritePosts(
         serviceLocator(),
       ),
@@ -151,6 +156,7 @@ void _initPost() {
       () => PostBloc(
           uploadPost: serviceLocator(),
           getAllPosts: serviceLocator(),
+          getPosts: serviceLocator(),
           getFavouritePosts: serviceLocator(),
           getUserPosts: serviceLocator(),
           addPostToFavourites: serviceLocator(),

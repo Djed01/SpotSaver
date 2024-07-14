@@ -27,6 +27,11 @@ class PostFetchAllPosts extends PostEvent {
   PostFetchAllPosts({this.fetchFresh = false});
 }
 
+class PostFetchPosts extends PostEvent {
+  final int pageKey;
+  PostFetchPosts(this.pageKey);
+}
+
 final class PostFilterByCategories extends PostEvent {
   final List<String> selectedCategories;
   PostFilterByCategories(this.selectedCategories);
