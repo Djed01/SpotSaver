@@ -3,6 +3,7 @@ import 'package:spot_saver/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:spot_saver/core/theme/theme.dart';
 import 'package:spot_saver/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:spot_saver/features/auth/presentation/pages/login_page.dart';
+import 'package:spot_saver/features/comment/presentation/bloc/comment_bloc.dart';
 import 'package:spot_saver/features/post/presentation/bloc/post_bloc.dart';
 import 'package:spot_saver/features/post/presentation/pages/posts_page.dart';
 import 'package:spot_saver/init_dependencies.dart';
@@ -21,6 +22,9 @@ void main() async {
       ),
       BlocProvider(
         create: (_) => serviceLocator<PostBloc>(),
+      ),
+      BlocProvider(
+        create: (_) => serviceLocator<CommentBloc>(),
       )
     ],
     child: const MyApp(),

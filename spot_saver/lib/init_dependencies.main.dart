@@ -6,6 +6,7 @@ Future<void> initDependencies() async {
   _initAuth();
   _initPost();
   _initLocation();
+  _initComment();
   final supabase = await Supabase.initialize(
       url: AppSecrets.supabaseUrl, anonKey: AppSecrets.supabaseAnonKey);
 
@@ -193,6 +194,58 @@ void _initLocation() {
   serviceLocator.registerLazySingleton(
     () => LocationBloc(
       getCurrentLocation: serviceLocator(),
+    ),
+  );
+}
+
+void _initComment() {
+  // Datasource
+  serviceLocator.registerFactory<CommentRemoteDataSource>(
+    () => CommentRemoteDataSourceImpl(
+      serviceLocator(),
+    ),
+  );
+
+  // Repository
+  serviceLocator.registerFactory<CommentRepository>(
+    () => CommentRepositoryImpl(
+      serviceLocator(),
+      serviceLocator(),
+    ),
+  );
+
+  // Usecases
+  serviceLocator.registerFactory(
+    () => GetComments(
+      serviceLocator(),
+    ),
+  );
+
+  serviceLocator.registerFactory(
+    () => AddComment(
+      serviceLocator(),
+    ),
+  );
+
+  serviceLocator.registerFactory(
+    () => DeleteComment(
+      serviceLocator(),
+    ),
+  );
+
+  serviceLocator.registerFactory(
+    () => UpdateComment(
+      serviceLocator(),
+    ),
+  );
+
+  // Bloc
+  serviceLocator.registerLazySingleton(
+    () => CommentBloc(
+      getComments: serviceLocator(),
+      addComment: serviceLocator(),
+      deleteComment: serviceLocator(),
+      updateComment: serviceLocator(),
     ),
   );
 }

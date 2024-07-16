@@ -7,6 +7,7 @@ import 'package:spot_saver/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:spot_saver/core/constants/constants.dart';
 import 'package:spot_saver/core/theme/app_pallete.dart';
 import 'package:spot_saver/core/utils/format_date.dart';
+import 'package:spot_saver/features/comment/presentation/widgets/comments.dart';
 import 'package:spot_saver/features/post/domain/entities/post.dart';
 import 'package:spot_saver/features/post/presentation/bloc/post_bloc.dart';
 import 'package:spot_saver/core/common/widgets/loader.dart';
@@ -289,6 +290,19 @@ class PostViewPageState extends State<PostViewPage>
                               ),
                             },
                           ),
+                        ),
+                        const SizedBox(height: 20),
+                        const Text(
+                          'Comments',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height / 3,
+                          child: CommentsWidget(postId: widget.post.id),
                         ),
                       ],
                     ),
