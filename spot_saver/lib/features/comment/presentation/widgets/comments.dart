@@ -18,6 +18,7 @@ class CommentsWidget extends StatefulWidget {
 
 class _CommentsWidgetState extends State<CommentsWidget> {
   final ScrollController _controller = ScrollController();
+  Comment? _editingComment;
   List<Comment> comments = [];
   int page = 0;
   bool isLoading = false;
@@ -69,8 +70,24 @@ class _CommentsWidgetState extends State<CommentsWidget> {
   void _onCommentAdded(Comment comment) async {
     setState(() {
       _isAddingComment = false;
+      _editingComment = null;
     });
-    await _refreshCommentData(); // Refresh comments to ensure posterName is updated
+    await _refreshCommentData();
+  }
+
+  void _onCommentUpdated(Comment comment) async {
+    setState(() {
+      _isAddingComment = false;
+      _editingComment = null;
+    });
+    await _refreshCommentData();
+  }
+
+  void _startEditingComment(Comment comment) {
+    setState(() {
+      _editingComment = comment;
+      _textController.text = comment.content;
+    });
   }
 
   void _onCommentDeleted(String commentId) {
@@ -99,6 +116,8 @@ class _CommentsWidgetState extends State<CommentsWidget> {
           _onCommentsFetched(state.comments);
         } else if (state is CommentAdded) {
           _onCommentAdded(state.comment);
+        } else if (state is CommentUpdated) {
+          _onCommentUpdated(state.comment);
         } else if (state is CommentDeleted) {
           _onCommentDeleted(state.commentId);
         }
@@ -191,7 +210,10 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                       itemCount: comments.length + 1,
                       itemBuilder: (context, index) {
                         if (index < comments.length) {
-                          return CommentWidget(comment: comments[index]);
+                          return CommentWidget(
+                            comment: comments[index],
+                            onEdit: _startEditingComment,
+                          );
                         } else {
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 32),
@@ -220,11 +242,13 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                     Expanded(
                       child: TextField(
                         controller: _textController,
-                        decoration: const InputDecoration(
-                          labelText: 'Add a comment...',
-                          contentPadding: EdgeInsets.symmetric(
+                        decoration: InputDecoration(
+                          labelText: _editingComment != null
+                              ? 'Update a comment...'
+                              : 'Add a comment...',
+                          contentPadding: const EdgeInsets.symmetric(
                               vertical: 8.0, horizontal: 8.0),
-                          border: OutlineInputBorder(),
+                          border: const OutlineInputBorder(),
                         ),
                       ),
                     ),
@@ -252,13 +276,24 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                                         _isAddingComment = true;
                                       });
 
-                                      context.read<CommentBloc>().add(
-                                            CommentAddComment(
-                                              postId: widget.postId,
-                                              userId: userId,
-                                              content: _textController.text,
-                                            ),
-                                          );
+                                      if (_editingComment != null) {
+                                        context.read<CommentBloc>().add(
+                                              CommentUpdateComment(
+                                                comment:
+                                                    _editingComment!.copyWith(
+                                                  content: _textController.text,
+                                                ),
+                                              ),
+                                            );
+                                      } else {
+                                        context.read<CommentBloc>().add(
+                                              CommentAddComment(
+                                                postId: widget.postId,
+                                                userId: userId,
+                                                content: _textController.text,
+                                              ),
+                                            );
+                                      }
 
                                       _textController.clear();
                                     }

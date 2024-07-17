@@ -31,6 +31,7 @@ class CommentModel extends Comment {
     );
   }
 
+  @override
   CommentModel copyWith({
     String? id,
     String? postId,

@@ -7,8 +7,13 @@ import 'package:spot_saver/features/comment/presentation/bloc/comment_bloc.dart'
 
 class CommentWidget extends StatelessWidget {
   final Comment comment;
+  final Function(Comment) onEdit;
 
-  const CommentWidget({super.key, required this.comment});
+  const CommentWidget({
+    super.key,
+    required this.comment,
+    required this.onEdit,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +88,7 @@ class CommentWidget extends StatelessWidget {
                                       title: const Text('Edit'),
                                       onTap: () {
                                         Navigator.pop(context);
-                                        // Implement edit functionality
+                                        onEdit(comment);
                                       },
                                     ),
                                     ListTile(

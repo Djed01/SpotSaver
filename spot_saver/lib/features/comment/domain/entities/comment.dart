@@ -13,4 +13,22 @@ class Comment {
       required this.content,
       required this.createdAt,
       this.posterName});
+
+  Comment copyWith({
+    String? id,
+    String? userId,
+    String? postId,
+    String? content,
+    DateTime? createdAt,
+    String? posterName,
+  }) {
+    return Comment(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      postId: postId ?? this.postId,
+      content: content ?? this.content,
+      createdAt: createdAt ?? this.createdAt,
+      posterName: posterName ?? this.posterName,
+    );
+  }
 }
