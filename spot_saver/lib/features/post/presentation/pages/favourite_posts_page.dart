@@ -30,32 +30,39 @@ class FavoritePostsPage extends StatelessWidget {
               title: const Text('Favorites'),
               centerTitle: true,
             ),
-            body: Scrollbar(
-              child: ListView.builder(
-                itemCount: posts.length,
-                itemBuilder: (context, index) {
-                  final post = posts[index];
-                  return PostCard(
-                    post: post,
-                    color: index % 4 == 0
-                        ? AppPallete.cardColor1
-                        : index % 4 == 1
-                            ? AppPallete.cardColor2
-                            : index % 4 == 2
-                                ? AppPallete.cardColor3
-                                : AppPallete.cardColor4,
-                    textColor: index % 4 == 0
-                        ? const Color.fromRGBO(255, 255, 255, 1)
-                        : index % 4 == 1
-                            ? const Color.fromRGBO(255, 255, 255, 1)
-                            : index % 4 == 2
-                                ? const Color.fromRGBO(0, 0, 0, 1)
-                                : const Color.fromRGBO(0, 0, 0, 1),
-                    sourcePage: SourcePage.favourites,
-                  );
-                },
-              ),
-            ),
+            body: posts.isEmpty
+                ? const Center(
+                    child: Text(
+                      'No posts available.',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  )
+                : Scrollbar(
+                    child: ListView.builder(
+                      itemCount: posts.length,
+                      itemBuilder: (context, index) {
+                        final post = posts[index];
+                        return PostCard(
+                          post: post,
+                          color: index % 4 == 0
+                              ? AppPallete.cardColor1
+                              : index % 4 == 1
+                                  ? AppPallete.cardColor2
+                                  : index % 4 == 2
+                                      ? AppPallete.cardColor3
+                                      : AppPallete.cardColor4,
+                          textColor: index % 4 == 0
+                              ? const Color.fromRGBO(255, 255, 255, 1)
+                              : index % 4 == 1
+                                  ? const Color.fromRGBO(255, 255, 255, 1)
+                                  : index % 4 == 2
+                                      ? const Color.fromRGBO(0, 0, 0, 1)
+                                      : const Color.fromRGBO(0, 0, 0, 1),
+                          sourcePage: SourcePage.favourites,
+                        );
+                      },
+                    ),
+                  ),
           );
         }
         return const SizedBox();

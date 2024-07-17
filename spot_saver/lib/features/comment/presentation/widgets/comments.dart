@@ -220,7 +220,7 @@ class _CommentsWidgetState extends State<CommentsWidget> {
                             child: Center(
                               child: hasMore
                                   ? const CircularProgressIndicator()
-                                  : const Text('No more comments to load'),
+                                  : const Text('No comments to load'),
                             ),
                           );
                         }

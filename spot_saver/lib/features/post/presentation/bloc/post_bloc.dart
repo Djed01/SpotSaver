@@ -71,6 +71,8 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   }
 
   void _onUpload(PostUpload event, Emitter<PostState> emit) async {
+    emit(PostLoading());
+
     final res = await _uploadPost(UploadPostParams(
         posterId: event.posterId,
         title: event.title,

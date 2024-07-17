@@ -199,6 +199,11 @@ class PostPageContent extends StatelessWidget {
         } else if (state is PostFetchPostsSuccess) {
           (context.findAncestorStateOfType<_PostsPageState>())
               ?._onPostsFetched(state.posts);
+        } else if (state is PostUpdateSuccess ||
+            state is PostDeleteSuccess ||
+            state is PostUploadSuccess) {
+          (context.findAncestorStateOfType<_PostsPageState>())
+              ?._refreshPostData();
         }
       },
       builder: (context, state) {
@@ -208,7 +213,7 @@ class PostPageContent extends StatelessWidget {
             (context.findAncestorStateOfType<_PostsPageState>())?.hasMore ??
                 false;
 
-        if (state is PostLoading && posts.isEmpty) {
+        if (state is PostLoading) {
           return Column(
             children: [
               PostCategoryWidget(
