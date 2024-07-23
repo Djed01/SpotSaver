@@ -204,6 +204,10 @@ class PostPageContent extends StatelessWidget {
             state is PostUploadSuccess) {
           (context.findAncestorStateOfType<_PostsPageState>())
               ?._refreshPostData();
+          (context.findAncestorStateOfType<_PostsPageState>())
+              ?._refreshFavouritesData();
+          (context.findAncestorStateOfType<_PostsPageState>())
+              ?._refreshUserData();
         }
       },
       builder: (context, state) {
