@@ -23,8 +23,7 @@ class CommentRepositoryImpl implements CommentRepository {
       int pageKey, String postId) async {
     try {
       if (!await connectionChecker.isConnected) {
-        // final posts = postLocalDataSource.loadPosts();
-        // return right(posts);
+        return left(Failure(Constants.noConnectionErrorMessage));
       }
       final comments =
           await commentRemoteDataSource.getComments(pageKey, postId);
