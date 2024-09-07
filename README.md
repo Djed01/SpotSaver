@@ -1,5 +1,6 @@
 # Spot-Saver
 Praktični dio diplomskog rada
+
 Tema aplikacije je platforma za razmjenu zanimljivih lokacija između korisnika. Korisnici mogu objaviti lokaciju, pri čemu objavljuju fotografiju, kategorije, naslov, opis i koordinate lokacije. Objavljenu lokaciju mogu da vide svi korisnici aplikacije, te mogu da komentarišu objavu, da označe objavu kao omiljenu, te pokrenu navigaciju ka datoj lokaciji.
 
 ![](https://github.com/Djed01/SpotSaver/blob/main/spot_saver/assets/demo/Screenshot_20240817_102116.jpg)
