@@ -1,6 +1,8 @@
 # Spot-Saver
 Praktični dio diplomskog rada
 
+Razvoj Flutter mobilnih aplikacija primjenom "Clean Architecture" pristupa
+
 Tema aplikacije je platforma za razmjenu zanimljivih lokacija između korisnika. Korisnici mogu objaviti lokaciju, pri čemu objavljuju fotografiju, kategorije, naslov, opis i koordinate lokacije. Objavljenu lokaciju mogu da vide svi korisnici aplikacije, te mogu da komentarišu objavu, da označe objavu kao omiljenu, te pokrenu navigaciju ka datoj lokaciji.
 
 <img src="https://github.com/Djed01/SpotSaver/blob/main/spot_saver/assets/demo/Screenshot_20240817_102116.jpg" width="50%" height="50%">
