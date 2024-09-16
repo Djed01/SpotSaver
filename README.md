@@ -1,7 +1,7 @@
 # Spot-Saver
 Praktični dio diplomskog rada
 
-Razvoj Flutter mobilnih aplikacija primjenom "Clean Architecture" pristupa
+Razvoj Flutter mobilnih aplikacija upotrebom "Clean Architecture" pristupa
 
 Tema aplikacije je platforma za razmjenu zanimljivih lokacija između korisnika. Korisnici mogu objaviti lokaciju, pri čemu objavljuju fotografiju, kategorije, naslov, opis i koordinate lokacije. Objavljenu lokaciju mogu da vide svi korisnici aplikacije, te mogu da komentarišu objavu, da označe objavu kao omiljenu, te pokrenu navigaciju ka datoj lokaciji.
 
